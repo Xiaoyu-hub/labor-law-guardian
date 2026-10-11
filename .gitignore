@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# 运行时数据（本地 SQLite 数据库不入库）
+data/*.db
+data/*.db-journal
+
+# 系统与编辑器
+Thumbs.db
+.DS_Store
+.idea/
+.vscode/
