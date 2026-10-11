@@ -12,3 +12,5 @@ Thumbs.db
 .DS_Store
 .idea/
 .vscode/
+# agent 工具本地缓存
+.nanobot/

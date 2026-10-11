@@ -110,7 +110,7 @@ python tests/e2e_m9.py        # 问答板发帖/回复/匿名浏览
 # 注：e2e_check / e2e_m8 的闯关循环读取 LJ.QUIZ.length，题库增题无需改测试
 ```
 
-最新回归：**23 后端单测 + 9 个前端脚本全绿**，console/page errors 均为 0（详见 `docs/测试报告.md`）。
+最新回归：**23 后端单测 + 10 个前端脚本全绿**，console/page errors 均为 0（详见 `docs/测试报告.md`）。
 
 ## 截图证据
 
