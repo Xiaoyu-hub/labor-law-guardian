@@ -44,9 +44,10 @@ with sync_playwright() as p:
     page.wait_for_selector("#calcResult .card")
     print("calc ok", flush=True)
 
-    # 闯关一轮（点第一个选项 ×12）
+    # 闯关一轮（点第一个选项 ×N）
     page.locator('a[data-view="quiz"]').click()
-    for _ in range(12):
+    total_q = page.evaluate("LJ.QUIZ.length")
+    for _ in range(total_q):
         page.wait_for_selector("#quizOpts .quiz-opt")
         page.locator("#quizOpts .quiz-opt").first.click()
         page.wait_for_selector("#btnQuizNext")

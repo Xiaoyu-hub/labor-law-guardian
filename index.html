@@ -93,7 +93,7 @@
   <section class="view" id="view-check">
     <div class="card">
       <h3 class="card-title">劳动合同智能体检</h3>
-      <p class="card-sub">粘贴你的劳动合同全文（或载入内置示例），系统将以 40+ 条规则扫描试用期、社保、加班、违约金、竞业限制、解除条款等违法风险点，逐条给出法条依据。</p>
+      <p class="card-sub">粘贴你的劳动合同全文（或载入内置示例），系统将以内置规则引擎扫描试用期、社保、加班、违约金、竞业限制、解除条款等违法风险点，逐条给出法条依据。</p>
       <label class="field">
         <span>合同文本</span>
         <textarea id="contractInput" placeholder="在此粘贴合同文本…&#10;也可以点击下方「载入示例合同」直接体验"></textarea>
@@ -147,6 +147,12 @@
           </div>
           <label class="field"><span>拟签合同期限（年）</span><input type="number" id="termYears" min="0" value="1" placeholder="用于校验试用期上限"></label>
           <label class="field"><span>拟签合同期限（个月）</span><input type="number" id="termMonths" min="0" max="11" value="0"></label>
+          <div class="divider"></div>
+          <label class="field"><span>工伤停工留薪期（月，按需填写）</span><input type="number" id="injMonths" min="0" max="24" value="0" placeholder="一般不超过 12 个月"></label>
+          <div class="grid grid-2">
+            <label class="field"><span>生育津贴：单位上年度月均工资</span><input type="number" id="matAvg" min="0" value="0" placeholder="如 8500"></label>
+            <label class="field"><span>产假天数</span><input type="number" id="matDays" min="0" value="0" placeholder="如 98"></label>
+          </div>
         </div>
       </div>
       <div class="row-inline">

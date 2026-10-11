@@ -133,5 +133,39 @@ LJ.CALC = (function () {
     return { max: 6, desc: '3 年以上固定期限或无固定期限劳动合同，试用期不得超过 6 个月' };
   };
 
+  /* ---------- 工伤停工留薪期工资（S4 新增） ----------
+     停工留薪期内原工资福利待遇不变，由单位按月支付，
+     一般不超过 12 个月（伤情严重或特殊，经设区的市级劳动能力鉴定委员会确认可延长，不超过 12 个月）。 */
+  R.suspensionWage = function (monthly, months) {
+    var m = Math.max(0, months || 0);
+    var amount = R.round2(monthly * m);
+    return {
+      months: m,
+      amount: amount,
+      note: '停工留薪期一般不超过 12 个月；伤情严重或情况特殊经劳动能力鉴定委员会确认可延长，延长不超过 12 个月（合计不超过 24 个月）。',
+      steps: ['停工留薪期内原工资福利待遇不变，由用人单位按月支付',
+              '停工留薪期工资 = ' + monthly + ' 元/月 × ' + m + ' 个月 = ' + amount + ' 元']
+    };
+  };
+
+  /* ---------- 生育津贴（S4 新增） ----------
+     生育津贴按职工所在用人单位上年度职工月平均工资计发：
+     津贴 = 单位上年度职工月平均工资 ÷ 30 × 产假天数。
+     未参加生育保险的，由用人单位按产假前工资标准支付。 */
+  R.maternityAllowance = function (avgMonthly, days) {
+    var d = Math.max(0, days || 0);
+    var daily = R.round2((avgMonthly || 0) / 30);
+    var amount = R.round2((avgMonthly || 0) / 30 * d);
+    return {
+      days: d,
+      daily: daily,
+      amount: amount,
+      note: '法定产假 98 天（难产增加 15 天、多胞胎每多 1 婴增加 15 天），各地另有奖励假；津贴按单位上年度职工月平均工资 ÷ 30 × 产假天数计发。未参保的由单位按产假前工资支付。',
+      steps: ['生育津贴 = 单位上年度职工月平均工资 ÷ 30 × 产假天数',
+              '日津贴 = ' + (avgMonthly || 0) + ' ÷ 30 = ' + daily + ' 元/天',
+              '津贴 = ' + daily + ' 元/天 × ' + d + ' 天 = ' + amount + ' 元']
+    };
+  };
+
   return R;
 })();

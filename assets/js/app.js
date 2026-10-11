@@ -101,9 +101,9 @@ window.LJ = window.LJ || {};
     $('statLaws').textContent = LJ.LAWS.length + ' 条';
     var stats = [
       { k: LJ.RULES.length + '+', v: '条违法条款识别规则', c: 'var(--gold)' },
-      { k: '6 类', v: '权益自动计算（加班费/N/2N/双倍工资/年假/试用期）', c: 'var(--cyan)' },
-      { k: LJ.ROADMAP.length + ' 类', v: '纠纷维权路径导航', c: 'var(--green)' },
-      { k: LJ.LAWS.length + ' 条', v: '核心法条速查', c: 'var(--violet)' }
+      { k: '8 类', v: '权益自动计算（加班费/N/2N/双倍工资/年假/试用期/停工留薪/生育津贴）', c: 'var(--gold)' },
+      { k: LJ.ROADMAP.length + ' 类', v: '纠纷维权路径导航', c: 'var(--gold)' },
+      { k: LJ.LAWS.length + ' 条', v: '核心法条速查', c: 'var(--gold)' }
     ];
     $('homeChart').innerHTML = stats.map(function (s) {
       return '<div class="metric alt"><span class="k">' + s.v + '</span><span class="v small" style="color:' + s.c + '">' + s.k + '</span></div>';
@@ -207,9 +207,10 @@ window.LJ = window.LJ || {};
     var dw = num($('dwMonths').value);
     var alYears = num($('alWorkYears').value), alDays = num($('alUnpaid').value);
     var tYears = num($('termYears').value), tMonths = num($('termMonths').value);
+    var injM = num($('injMonths').value), matA = num($('matAvg').value), matD = num($('matDays').value);
     return { monthly: monthly, years: years, months: months, reason: reason, avg3x: avg3x,
       ot: [otWork, otRest, otHoliday], dw: dw, alYears: alYears, alDays: alDays,
-      tYears: tYears, tMonths: tMonths };
+      tYears: tYears, tMonths: tMonths, injMonths: injM, matAvg: matA, matDays: matD };
   }
 
   $('btnCalcDemo').addEventListener('click', function () {
@@ -296,6 +297,28 @@ window.LJ = window.LJ || {};
       parts.push({
         title: '拟签合同试用期上限校验', law: ['劳动合同法 第十九条'],
         body: '<p style="margin:0"><b>合同期限 ' + d.tYears + ' 年 ' + d.tMonths + ' 个月：</b>' + esc(pm.desc) + '</p>'
+      });
+    }
+
+    /* 6. 工伤停工留薪期工资 */
+    if (d.injMonths > 0) {
+      var susp = LJ.CALC.suspensionWage(d.monthly, d.injMonths);
+      chartItems.push({ label: '停工留薪期工资', value: susp.amount, color: '#d4a84b' });
+      parts.push({
+        title: '工伤停工留薪期工资', law: ['工伤保险条例 第三十三条'],
+        body: '<ul class="clean">' + susp.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>' +
+        '<p style="margin:10px 0 0"><b>' + fmt(susp.amount) + ' 元</b>　<span class="hint">' + esc(susp.note) + '</span></p>'
+      });
+    }
+
+    /* 7. 生育津贴 */
+    if (d.matAvg > 0 && d.matDays > 0) {
+      var mat = LJ.CALC.maternityAllowance(d.matAvg, d.matDays);
+      chartItems.push({ label: '生育津贴', value: mat.amount, color: '#d4a84b' });
+      parts.push({
+        title: '生育津贴', law: ['社会保险法 第五十六条', '女职工劳动保护特别规定 第八条'],
+        body: '<ul class="clean">' + mat.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>' +
+        '<p style="margin:10px 0 0"><b>' + fmt(mat.amount) + ' 元</b>　<span class="hint">' + esc(mat.note) + '</span></p>'
       });
     }
 
@@ -687,7 +710,7 @@ window.LJ = window.LJ || {};
       var statsHtml =
         '<div class="metric"><span class="k">连续打卡</span><span class="v">' + checkins.streak + ' 天</span></div>' +
         '<div class="metric"><span class="k">累计打卡</span><span class="v">' + checkins.total + ' 次</span></div>' +
-        '<div class="metric"><span class="k">闯关最佳</span><span class="v">' + (mine.best == null ? '-' : mine.best + ' / 12') + '</span></div>' +
+        '<div class="metric"><span class="k">闯关最佳</span><span class="v">' + (mine.best == null ? '-' : mine.best + ' / ' + LJ.QUIZ.length) + '</span></div>' +
         '<div class="metric"><span class="k">累计场次</span><span class="v">' + mine.games + ' 场</span></div>' +
         '<div class="metric"><span class="k">体检记录</span><span class="v">' + checks.length + ' 条</span></div>' +
         '<div class="metric"><span class="k">计算记录</span><span class="v">' + calcs.length + ' 条</span></div>';
@@ -719,7 +742,7 @@ window.LJ = window.LJ || {};
             var me = u && (b.username === u.username);
             return '<tr' + (me ? ' class="me-row"' : '') + '><td>' + (i + 1) + '</td>' +
               '<td>' + esc((b.nickname || '') + (me ? '（我）' : '')) + '</td>' +
-              '<td><b>' + b.best + '</b> / 12</td><td>' + b.games + '</td>' +
+              '<td><b>' + b.best + '</b> / ' + LJ.QUIZ.length + '</td><td>' + b.games + '</td>' +
               '<td class="hint">' + esc((b.last_at || '').replace('T', ' ').slice(0, 10)) + '</td></tr>';
           }).join('') + '</table>'
         : '<p class="hint">暂无成绩上榜：完成一轮「情景闯关」后自动计入排行榜。</p>';
@@ -799,6 +822,9 @@ window.LJ = window.LJ || {};
             $('alUnpaid').value = i.alDays || '';
             $('termYears').value = i.tYears != null ? i.tYears : 1;
             $('termMonths').value = i.tMonths || '';
+            $('injMonths').value = i.injMonths || '';
+            $('matAvg').value = i.matAvg || '';
+            $('matDays').value = i.matDays || '';
             $('calcHint').textContent = '已载入历史记录（自动重算）';
             location.hash = '#calc';
             onHash();

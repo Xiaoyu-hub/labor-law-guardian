@@ -73,10 +73,11 @@ with sync_playwright() as p:
     log("roadmap(unpay) timeline items: %d" % tl)
     shot(page, "04_roadmap.png")
 
-    # ---- 情景闯关：第1题故意答错，其余全对，走完 12 题 ----
+    # ---- 情景闯关：第1题故意答错，其余全对，走完全部题 ----
     page.locator('a[data-view="quiz"]').click()
     page.wait_for_selector("#view-quiz.active")
-    for i in range(12):
+    total_q = page.evaluate("LJ.QUIZ.length")
+    for i in range(total_q):
         try:
             if i == 0:
                 page.locator('#quizOpts .quiz-opt[data-i="0"]').click()
