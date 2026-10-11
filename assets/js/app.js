@@ -122,9 +122,76 @@ window.LJ = window.LJ || {};
     $('contractInput').value = '';
     $('checkHint').textContent = '';
     $('checkResult').innerHTML = '';
+    $('btnExportReport').style.display = 'none';
   });
 
   $('btnCheck').addEventListener('click', function () { runCheck(); });
+
+  /* S5：最近一次体检结果保留，供导出打印版报告 */
+  var lastCheck = null;
+  $('btnExportReport').addEventListener('click', function () {
+    if (!lastCheck) return;
+    exportReport(lastCheck.text, lastCheck.res);
+  });
+
+  function exportReport(text, res) {
+    var s = res.stats;
+    var levelText = { high: '高风险合同', medium: '中风险合同', low: '低风险合同' }[res.level];
+    var now = new Date();
+    var stamp = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' +
+      String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+    /* 法条原文展开：去重引用并取全文 */
+    var refs = {};
+    res.findings.forEach(function (f) {
+      f.rule.laws.forEach(function (r) { refs[r] = (refs[r] || 0) + 1; });
+    });
+    var lawHtml = Object.keys(refs).sort().map(function (ref) {
+      var a = LJ.getArticle(ref);
+      return '<div class="law"><b>' + esc(ref) + (a ? ' · ' + esc(a.title) : '') + '</b>' +
+        (a ? '<p>' + esc(a.text) + '</p>' : '<p class="hint">（未收录全文，请以现行有效版本为准）</p>') + '</div>';
+    }).join('');
+
+    var itemsHtml = res.findings.map(function (f) {
+      var lv = { high: '高危', medium: '中危', low: '低危' }[f.rule.severity];
+      return '<div class="item ' + f.rule.severity + '"><span class="lv">' + lv + '</span>' +
+        '<div><b>' + esc(f.rule.title) + '</b>' + (f.count > 1 ? '（命中 ' + f.count + ' 处）' : '') +
+        '<p class="quote">原文：「' + esc(f.first) + '」</p>' +
+        '<p>' + esc(f.rule.advice) + '</p>' +
+        '<p class="ref">依据：' + f.rule.laws.map(esc).join('；') + '</p></div></div>';
+    }).join('');
+
+    var html = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><title>合同体检报告</title>' +
+      '<style>' +
+      'body{font-family:Microsoft YaHei,system-ui,sans-serif;color:#1c2733;margin:28px auto;max-width:760px;padding:0 20px;}' +
+      'h1{font-size:22px;letter-spacing:2px;margin:0 0 4px;}' +
+      '.meta{color:#5c6b7a;font-size:12.5px;margin:6px 0 18px;border-bottom:2px solid #1c2733;padding-bottom:10px;}' +
+      '.score{font-size:15px;font-weight:700;margin:10px 0 16px;}' +
+      '.item{border:1px solid #d8dee5;border-left:4px solid #9aa4ae;border-radius:4px;padding:10px 14px;margin:0 0 12px;page-break-inside:avoid;}' +
+      '.item.high{border-left-color:#c0392b;}.item.medium{border-left-color:#e6a23c;}.item.low{border-left-color:#3d9a6e;}' +
+      '.lv{display:inline-block;font-size:11.5px;font-weight:700;border:1px solid currentColor;border-radius:3px;padding:0 6px;margin-right:8px;vertical-align:1px;}' +
+      '.item.high .lv{color:#c0392b;}.item.medium .lv{color:#b88230;}.item.low .lv{color:#3d9a6e;}' +
+      '.quote{color:#5c6b7a;font-size:13px;margin:4px 0;}' +
+      '.ref{color:#7a8794;font-size:12px;}' +
+      '.law{border-top:1px dashed #d8dee5;padding:8px 0;}' +
+      '.law b{font-size:13px;}.law p{font-size:12.5px;color:#3c4a57;margin:4px 0 0;line-height:1.75;}' +
+      '.foot{margin-top:18px;font-size:11.5px;color:#7a8794;border-top:1px solid #d8dee5;padding-top:10px;}' +
+      'h2{font-size:16px;margin:20px 0 10px;}' +
+      '@media print{body{margin:0;max-width:none;padding:0;}a{color:inherit;text-decoration:none;}}' +
+      '</style></head><body>' +
+      '<h1>劳动法治护航 · 合同体检报告</h1>' +
+      '<div class="meta">生成时间：' + stamp + '　|　扫描文本 ' + text.length + ' 字　|　命中 ' + s.total + ' 类问题（高危 ' + s.high + ' / 中危 ' + s.medium + ' / 低危 ' + s.low + '）</div>' +
+      '<div class="score">合同风险评分：' + res.score + ' 分　—　' + levelText + '</div>' +
+      '<h2>发现的问题条款</h2>' + itemsHtml +
+      '<h2>依据法条原文</h2>' + lawHtml +
+      '<div class="foot">本报告由《劳动法治护航》本地规则引擎生成，仅供学习与自查参考；结论不构成法律意见，最终以仲裁、司法机关的认定为准。</div>' +
+      '</body></html>';
+
+    var w = window.open('', '_blank');
+    if (!w) { alert('浏览器拦截了弹窗，请允许本站打开新窗口后重试。'); return; }
+    w.document.write(html);
+    w.document.close();
+  }
 
   function runCheck() {
     var text = $('contractInput').value;
@@ -180,6 +247,10 @@ window.LJ = window.LJ || {};
       '<div class="contract-box">' + hl + '</div></div>';
 
     box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    /* S5：保留最近一次结果并显示导出按钮 */
+    lastCheck = { text: text, res: res };
+    $('btnExportReport').style.display = '';
 
     /* M8：已登录时自动保存体检记录（历史列表见「我的」档案页） */
     if (LJ.API.state.backend && LJ.API.state.user) {
