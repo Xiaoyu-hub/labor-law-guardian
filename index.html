@@ -13,18 +13,18 @@
 <header class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <span class="brand-badge">⚖</span>
+      <span class="brand-badge"></span>
       <span>劳动法治护航<small>LABOR RIGHTS GUARDIAN</small></span>
     </div>
     <nav class="nav" id="mainNav">
-      <a href="#home" data-view="home" class="active">🏠 首页</a>
-      <a href="#check" data-view="check">📋 合同体检</a>
-      <a href="#calc" data-view="calc">🧮 权益计算</a>
-      <a href="#roadmap" data-view="roadmap">🛡 维权导航</a>
-      <a href="#quiz" data-view="quiz">🎯 情景闯关</a>
-      <a href="#law" data-view="law">📖 法条速查</a>
-      <a href="#qa" data-view="qa">💬 问答</a>
-      <a href="#profile" data-view="profile">👤 我的</a>
+      <a href="#home" data-view="home" class="active">首页</a>
+      <a href="#check" data-view="check">合同体检</a>
+      <a href="#calc" data-view="calc">权益计算</a>
+      <a href="#roadmap" data-view="roadmap">维权导航</a>
+      <a href="#quiz" data-view="quiz">情景闯关</a>
+      <a href="#law" data-view="law">法条速查</a>
+      <a href="#qa" data-view="qa">问答</a>
+      <a href="#profile" data-view="profile">我的</a>
     </nav>
     <span id="backendState"></span>
   </div>
@@ -35,56 +35,56 @@
   <!-- ==================== 首页 ==================== -->
   <section class="view active" id="view-home">
     <div class="hero">
-      <h1>劳动合同不会看？权益不会算？维权不会走？<br><em>让法律条文变成看得懂、用得上的工具。</em></h1>
+      <h1>劳动合同不会看，权益不会算，维权不会走？<em>让法律条文变成看得懂、用得上的工具。</em></h1>
       <p class="lead">
-        一个面向大学生与新就业劳动者的劳动法治教育平台：粘贴合同文本即可智能体检风险条款；
-        输入工资与工龄即可算出应得补偿；选择纠纷类型即可获得完整维权时间线。全部本地运算，随开随用。
+        面向大学生与新就业劳动者的劳动法治教育平台：粘贴合同文本即可体检风险条款；
+        输入工资与工龄即可算出应得补偿；选择纠纷类型即可获得完整维权路线。全部本地运算，随开随用。
       </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#check">📋 立即体检我的合同</a>
-        <a class="btn" href="#calc">🧮 算一算应得权益</a>
-        <a class="btn btn-ghost" href="#quiz">🎯 挑战情景闯关</a>
+        <a class="btn btn-primary" href="#check">立即体检我的合同</a>
+        <a class="btn" href="#calc">算一算应得权益</a>
+        <a class="btn btn-ghost" href="#quiz">挑战情景闯关</a>
       </div>
       <div class="hero-stats">
         <div class="hero-stat"><b>40+</b><span>违法条款识别规则</span></div>
         <div class="hero-stat"><b>6 类</b><span>劳动权益自动计算</span></div>
-        <div class="hero-stat"><b>6 类</b><span>纠纷维权路径导航</span></div>
+        <div class="hero-stat"><b>6 类</b><span>纠纷维权专属路线</span></div>
         <div class="hero-stat"><b id="statLaws">48 条</b><span>核心法条速查</span></div>
         <div class="hero-stat"><b>12 题</b><span>情景闯关题库</span></div>
       </div>
     </div>
 
-    <div style="height:20px"></div>
+    <div style="height:12px"></div>
 
     <div class="grid grid-2">
       <div class="card">
-        <h3 class="card-title"><span class="ico">📋</span>为什么需要它？</h3>
+        <h3 class="card-title">为什么需要它？</h3>
         <ul class="clean">
-          <li><b>超长试用期</b>：1 年期合同约 3 个月试用期——违法，上限是 2 个月。</li>
+          <li><b>超长试用期</b>：1 年期合同约定 3 个月试用期——违法，上限是 2 个月。</li>
           <li><b>「自愿放弃社保」</b>：签了也没用——缴纳社保是强制法定义务。</li>
-          <li><b>「工资已含加班费」</b>：包薪制≠可以不付加班费，差额仍可主张。</li>
+          <li><b>「工资已含加班费」</b>：包薪制 ≠ 可以不付加班费，差额仍可主张。</li>
           <li><b>竞业限制无补偿</b>：约定 2 年不开同类工作却不给钱——违反法定要求。</li>
           <li><b>仲裁时效 1 年</b>：知道权利被侵害后不及时行动，权利可能过期作废。</li>
         </ul>
       </div>
       <div class="card">
-        <h3 class="card-title"><span class="ico">📊</span>我们怎么帮你守法用法</h3>
+        <h3 class="card-title">如何帮助你守法用法</h3>
         <div class="grid grid-4" id="homeChart"></div>
-        <p class="hint" style="margin-top:12px">
-          四大模块：<b>合同体检</b>把违法条款逐条高亮并附法条依据；
+        <p class="hint" style="margin-top:14px">
+          <b>合同体检</b>把违法条款逐条标出并附法条依据；
           <b>权益计算</b>按法定公式逐步算出金额；
-          <b>维权导航</b>给出从协商到执行的完整时间线与材料清单；
+          <b>维权导航</b>给出从证据固定到执行完毕的专属路线；
           <b>情景闯关</b>在答题中建立法感。
         </p>
       </div>
     </div>
 
-    <div class="card" style="margin-top:18px">
-      <h3 class="card-title"><span class="ico">⚖</span>设计原则</h3>
+    <div class="card" style="margin-top:16px">
+      <h3 class="card-title">设计原则</h3>
       <div class="grid grid-3">
         <div><h4 style="margin:6px 0 2px">01 · 每条结论都有法条</h4><p class="kv" style="margin-top:0">所有风险提示与计算结果均标注法律依据（法名+条号），可在「法条速查」中交叉核对原文。</p></div>
-        <div><h4 style="margin:6px 0 2px">02 · 只判断，不裁决</h4><p class="kv" style="margin-top:0">工具输出的是「风险提示与法定标准」，具体争议以劳动行政部门、仲裁机构与法院认定为准。</p></div>
-        <div><h4 style="margin:6px 0 2px">03 · 零依赖可演示</h4><p class="kv" style="margin-top:0">纯本地静态网页，不联网、不装环境、不留存任何输入数据，可放心演示。</p></div>
+        <div><h4 style="margin:6px 0 2px">02 · 只判断，不裁决</h4><p class="kv" style="margin-top:0">工具输出的是风险提示与法定标准，具体争议以劳动行政部门、仲裁机构与法院认定为准。</p></div>
+        <div><h4 style="margin:6px 0 2px">03 · 零依赖可演示</h4><p class="kv" style="margin-top:0">纯本地网页，不联网、不装环境、输入数据仅存于本机，可放心演示。</p></div>
       </div>
     </div>
   </section>
@@ -92,15 +92,15 @@
   <!-- ==================== 合同体检 ==================== -->
   <section class="view" id="view-check">
     <div class="card">
-      <h3 class="card-title"><span class="ico">📋</span>劳动合同智能体检</h3>
-      <p class="card-sub">粘贴你的劳动合同全文（或载入内置示例），系统将以 40+ 条规则扫描试用期、社保、加班、违约金、竞业限制、解除条款等违法风险点。</p>
+      <h3 class="card-title">劳动合同智能体检</h3>
+      <p class="card-sub">粘贴你的劳动合同全文（或载入内置示例），系统将以 40+ 条规则扫描试用期、社保、加班、违约金、竞业限制、解除条款等违法风险点，逐条给出法条依据。</p>
       <label class="field">
         <span>合同文本</span>
         <textarea id="contractInput" placeholder="在此粘贴合同文本…&#10;也可以点击下方「载入示例合同」直接体验"></textarea>
       </label>
       <div class="row-inline">
-        <button class="btn btn-primary" id="btnCheck">🔍 开始体检</button>
-        <button class="btn" id="btnSample">📥 载入示例合同</button>
+        <button class="btn btn-primary" id="btnCheck">开始体检</button>
+        <button class="btn" id="btnSample">载入示例合同</button>
         <button class="btn btn-ghost" id="btnClearCheck">清空</button>
         <span class="hint" id="checkHint"></span>
       </div>
@@ -111,7 +111,7 @@
   <!-- ==================== 权益计算 ==================== -->
   <section class="view" id="view-calc">
     <div class="card">
-      <h3 class="card-title"><span class="ico">🧮</span>劳动权益计算器</h3>
+      <h3 class="card-title">劳动权益计算器</h3>
       <p class="card-sub">输入工资、工龄与加班/未签合同情况，按法定公式逐步计算：加班费、经济补偿 N、违法解除 2N、双倍工资、未休年假折现。</p>
       <div class="grid grid-2">
         <div>
@@ -150,8 +150,8 @@
         </div>
       </div>
       <div class="row-inline">
-        <button class="btn btn-primary" id="btnCalc">🧮 开始计算</button>
-        <button class="btn" id="btnCalcDemo">📥 载入演示数据</button>
+        <button class="btn btn-primary" id="btnCalc">开始计算</button>
+        <button class="btn" id="btnCalcDemo">载入演示数据</button>
         <button class="btn btn-ghost" id="btnClearCalc">清空</button>
         <span class="hint" id="calcHint"></span>
       </div>
@@ -162,8 +162,8 @@
   <!-- ==================== 维权导航 ==================== -->
   <section class="view" id="view-roadmap">
     <div class="card">
-      <h3 class="card-title"><span class="ico">🛡</span>维权路径导航</h3>
-      <p class="card-sub">选择你遇到的纠纷类型，生成「协商 → 调解 → 仲裁 → 诉讼 → 执行」的完整维权路线、关键时限与材料清单。</p>
+      <h3 class="card-title">维权路径导航</h3>
+      <p class="card-sub">每种纠纷的法定处理路径并不相同：欠薪可先走行政监察，工伤必须先申请认定，社保未缴以行政补缴为主线。选择你的情形，查看专属维权路线。</p>
       <div class="row-inline" id="roadmapTypes"></div>
     </div>
     <div id="roadmapResult"></div>
@@ -172,8 +172,8 @@
   <!-- ==================== 情景闯关 ==================== -->
   <section class="view" id="view-quiz">
     <div class="card">
-      <h3 class="card-title"><span class="ico">🎯</span>情景闯关 · 劳动法防坑训练</h3>
-      <p class="card-sub">都是真实签约/职场场景里的高频陷阱，做完就知道自己在哪一环容易踩坑。</p>
+      <h3 class="card-title">情景闯关 · 劳动法防坑训练</h3>
+      <p class="card-sub">12 道高频签约与职场场景题，每道作答后给出判定与法条解析。</p>
       <div class="progress" id="quizProgress"><i style="width:0%"></i></div>
       <div id="quizBox"></div>
     </div>
@@ -182,7 +182,7 @@
   <!-- ==================== 法条速查 ==================== -->
   <section class="view" id="view-law">
     <div class="card">
-      <h3 class="card-title"><span class="ico">📖</span>劳动法律条文速查</h3>
+      <h3 class="card-title">劳动法律条文速查</h3>
       <p class="card-sub">检索《劳动合同法》《劳动法》《社会保险法》《劳动争议调解仲裁法》《工伤保险条例》《职工带薪年休假条例》等核心条文。</p>
       <input type="text" id="lawSearch" placeholder="输入关键词检索，如：试用期 / 加班费 / 竞业限制 / 经济补偿 / 社保 / 仲裁时效…">
       <div class="row-inline" id="lawQuick" style="margin-top:10px"></div>
@@ -203,8 +203,8 @@
 </main>
 
 <footer class="footer">
-  《劳动法治护航》 — 劳动法治教育课程大作业演示系统 · 纯本地静态网页，输入数据不出本机
-  <br>本工具内容依据现行法律整理，仅供学习参考，具体争议以行政、仲裁、司法机关认定为准
+  《劳动法治护航》 — 劳动法治教育课程大作业演示系统 · 纯本地静态部署，输入数据不出本机
+  本工具内容依据现行法律整理，仅供学习参考，具体争议以行政、仲裁、司法机关认定为准
 </footer>
 
 <script src="assets/js/data-law.js"></script>

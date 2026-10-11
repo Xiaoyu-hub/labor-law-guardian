@@ -16,11 +16,11 @@ window.LJ = window.LJ || {};
   function esc(s) { return LJ.escapeHtml(s); }
   function lawChips(refs) {
     return (refs || []).map(function (r) {
-      return '<span class="badge badge-law">⚖ ' + esc(r) + '</span>';
+      return '<span class="badge badge-law">' + esc(r) + '</span>';
     }).join(' ');
   }
   function levelBadge(level) {
-    var map = { high: ['badge-high', '高风险'], medium: ['badge-medium', '中风险'], low: ['badge-low', '低风险'] };
+    var map = { high: ['badge-danger', '高风险'], medium: ['badge-warn', '中风险'], low: ['badge-low', '低风险'] };
     var m = map[level] || map.medium;
     return '<span class="badge ' + m[0] + '">' + m[1] + '</span>';
   }
@@ -29,7 +29,7 @@ window.LJ = window.LJ || {};
   /* 半环形评分仪表盘 */
   function scoreGauge(score, level) {
     var W = 220, H = 132, R = 88, cx = W / 2, cy = H - 6;
-    var color = level === 'high' ? '#f0524d' : (level === 'medium' ? '#f59e0b' : '#2ecc8f');
+    var color = level === 'high' ? '#d96a5a' : (level === 'medium' ? '#cf9b52' : '#5f9f7f');
     var circ = 2 * Math.PI * R;
     var filled = (score / 100) * (circ / 2);
     return (
@@ -57,19 +57,19 @@ window.LJ = window.LJ || {};
     /* 网格线 */
     for (var g = 0; g <= 4; g++) {
       var gy = padT + plotH - (plotH * g / 4);
-      svg += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (W - padR) + '" y2="' + gy + '" stroke="#1b2b41" stroke-width="1"/>';
-      svg += '<text x="' + (padL - 8) + '" y="' + (gy + 4) + '" text-anchor="end" fill="#6b7f99" font-size="10">' +
+      svg += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (W - padR) + '" y2="' + gy + '" stroke="#232c38" stroke-width="1"/>';
+      svg += '<text x="' + (padL - 8) + '" y="' + (gy + 4) + '" text-anchor="end" fill="#69737f" font-size="10">' +
         fmt(max * g / 4) + '</text>';
     }
     items.forEach(function (it, i) {
       var x = padL + (plotW / n) * i + (plotW / n - bw) / 2;
       var h = Math.max(it.value / max * plotH, it.value > 0 ? 3 : 0);
       var y = padT + plotH - h;
-      svg += '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + h + '" rx="6" fill="' +
-        (it.color || '#f0b429') + '" opacity="0.92"><title>' + esc(it.label) + '：' + fmt(it.value) + ' 元</title></rect>';
-      svg += '<text x="' + (x + bw / 2) + '" y="' + (y - 6) + '" text-anchor="middle" fill="#f6ecd0" font-size="12" font-weight="600">' +
+      svg += '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + h + '" rx="4" fill="' +
+        (it.color || '#d4a84b') + '"><title>' + esc(it.label) + '：' + fmt(it.value) + ' 元</title></rect>';
+      svg += '<text x="' + (x + bw / 2) + '" y="' + (y - 6) + '" text-anchor="middle" fill="#e6c57a" font-size="12" font-weight="600">' +
         fmt(it.value) + '</text>';
-      svg += '<text x="' + (x + bw / 2) + '" y="' + (H - padB + 18) + '" text-anchor="middle" fill="#93a6c0" font-size="11">' +
+      svg += '<text x="' + (x + bw / 2) + '" y="' + (H - padB + 18) + '" text-anchor="middle" fill="#98a2b0" font-size="11">' +
         esc(it.label) + '</text>';
     });
     svg += '</svg>';
@@ -132,7 +132,7 @@ window.LJ = window.LJ || {};
     var box = $('checkResult');
     if (!res.findings.length) {
       box.innerHTML =
-        '<div class="card"><h3 class="card-title"><span class="ico">✅</span>未命中风险规则</h3>' +
+        '<div class="card"><h3 class="card-title">未命中风险规则</h3>' +
         '<p class="card-sub">该文本未命中内置风险规则。注意：本工具只能提示常见风险点，不代替专业审查；建议核对必备条款是否齐全（法条速查 → 劳动合同法 第十七条）。</p></div>';
       return;
     }
@@ -142,9 +142,9 @@ window.LJ = window.LJ || {};
     /* 命中原文（高亮） */
     var hl = LJ.highlightContract(text, res.hits);
 
-    /* 类别分布柱状图 */
+    /* 类别分布柱状图（统一强调色） */
     var cats = Object.keys(s.byCategory).sort(function (a, b) { return s.byCategory[b] - s.byCategory[a]; })
-      .map(function (c) { return { label: c, value: s.byCategory[c], color: '#45b7f5' }; });
+      .map(function (c) { return { label: c, value: s.byCategory[c], color: '#d4a84b' }; });
     var catBar = cats.length ? barChart(cats.slice(0, 6), null) : '';
 
     var findingsHtml = res.findings.map(function (f) {
@@ -154,7 +154,7 @@ window.LJ = window.LJ || {};
         (f.count > 1 ? '<span class="badge badge-info">命中 ' + f.count + ' 处</span>' : '') +
         '</h4>' +
         '<div class="quote">「' + esc(f.first) + '」</div>' +
-        '<p class="advice">💡 ' + esc(f.rule.advice) + '</p>' +
+        '<p class="advice">' + esc(f.rule.advice) + '</p>' +
         '<div class="laws">' + lawChips(f.rule.laws) + '</div>' +
         '</div>';
     }).join('');
@@ -164,20 +164,18 @@ window.LJ = window.LJ || {};
       '<div class="grid grid-2" style="align-items:center">' +
       '<div class="center" style="max-width:260px;margin:0 auto">' + scoreGauge(res.score, res.level) +
       '<div style="margin-top:6px">' + levelBadge(res.level) + ' <span class="hint">' + levelText + '</span></div></div>' +
-      '<div><h3 class="card-title mb0"><span class="ico">📄</span>体检结论</h3>' +
+      '<div><h3 class="card-title mb0">体检结论</h3>' +
       '<p class="card-sub">扫描文本 ' + text.length + ' 字 · 命中 ' + s.total + ' 类问题（' +
-      '<span style="color:#f0524d">高危 ' + s.high + '</span> / ' +
-      '<span style="color:#f59e0b">中危 ' + s.medium + '</span> / ' +
-      '<span style="color:#2ecc8f">低危 ' + s.low + '</span>）</p>' +
+      '高危 ' + s.high + ' / 中危 ' + s.medium + ' / 低危 ' + s.low + '）</p>' +
       '<div class="notice">发现的问题条款按「法条依据」逐条定位，点击速查可对照原文。高风险建议：先不签字，向单位书面要求修改，或咨询当地劳动保障监察部门（12333）。</div>' +
       '</div></div></div>' +
 
-      '<div class="card"><h3 class="card-title"><span class="ico">🏷</span>问题条款分布</h3>' + catBar + '</div>' +
+      '<div class="card"><h3 class="card-title">问题条款分布</h3>' + catBar + '</div>' +
 
-      '<div class="card"><h3 class="card-title"><span class="ico">🔍</span>风险报告（' + s.total + ' 类，按严重度排序）</h3>' +
+      '<div class="card"><h3 class="card-title">风险报告（' + s.total + ' 类，按严重度排序）</h3>' +
       '<div id="findingList">' + findingsHtml + '</div></div>' +
 
-      '<div class="card"><h3 class="card-title"><span class="ico">📌</span>原文命中标注</h3>' +
+      '<div class="card"><h3 class="card-title">原文命中标注</h3>' +
       '<p class="card-sub">鼠标悬停高亮片段可查看对应风险名称。</p>' +
       '<div class="contract-box">' + hl + '</div></div>';
 
@@ -253,18 +251,18 @@ window.LJ = window.LJ || {};
         return '<tr><td>' + r.part.desc + '</td><td>' + r.part.hours + ' 小时</td><td>' + r.formula + '</td><td><b style="color:var(--gold)">' + fmt(r.amount) + ' 元</b></td></tr>';
       }).join('');
       parts.push({
-        icon: '🕒', title: '加班费', law: ['劳动法 第四十四条'],
+        title: '加班费', law: ['劳动法 第四十四条'],
         body: '<table class="data"><tr><th>项目</th><th>时长</th><th>计算过程</th><th>金额</th></tr>' + otRows +
         '</table><p style="margin:10px 0 0"><b>小计：' + fmt(ot.total) + ' 元</b>　<span class="hint">（小时工资 = 月工资 ÷ 21.75 ÷ 8 = ' + fmt(ot.hourly) + ' 元）</span></p>'
       });
-      chartItems.push({ label: '加班费', value: ot.total, color: '#45b7f5' });
+      chartItems.push({ label: '加班费', value: ot.total, color: '#d4a84b' });
     }
 
     /* 2. 经济补偿 / 赔偿金 */
     var term = LJ.CALC.termination(d.reason, d.monthly, d.years, d.months, d.avg3x);
-    chartItems.push({ label: term.label.split('（')[0], value: term.money, color: '#f0b429' });
+    chartItems.push({ label: term.label.split('（')[0], value: term.money, color: '#d4a84b' });
     parts.push({
-      icon: '💼', title: '解除/终止补偿（' + term.label + '）', law: [term.law],
+      title: '解除/终止补偿（' + term.label + '）', law: [term.law],
       body: '<ul class="clean">' + term.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>' +
       '<p style="margin:10px 0 0"><b>应得金额：' + fmt(term.money) + ' 元</b></p>'
     });
@@ -272,9 +270,9 @@ window.LJ = window.LJ || {};
     /* 3. 双倍工资 */
     if (d.dw > 0) {
       var dw = LJ.CALC.doubleWage(d.monthly, d.dw);
-      chartItems.push({ label: '双倍工资差额', value: dw.extra, color: '#2ecc8f' });
+      chartItems.push({ label: '双倍工资差额', value: dw.extra, color: '#d4a84b' });
       parts.push({
-        icon: '📄', title: '未签书面合同双倍工资差额', law: ['劳动合同法 第八十二条'],
+        title: '未签书面合同双倍工资差额', law: ['劳动合同法 第八十二条'],
         body: '<ul class="clean">' + dw.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>' +
         '<p style="margin:10px 0 0"><b>可另行主张差额：' + fmt(dw.extra) + ' 元</b>（含应得部分总计 ' + fmt(dw.total) + ' 元）</p>'
       });
@@ -284,9 +282,9 @@ window.LJ = window.LJ || {};
     var leaveDays = LJ.CALC.annualLeaveDays(d.alYears);
     if (d.alDays > 0 && leaveDays > 0) {
       var al = LJ.CALC.annualLeaveCash(d.monthly, leaveDays, d.alDays);
-      chartItems.push({ label: '未休年假折现', value: al.amount, color: '#9d7bf5' });
+      chartItems.push({ label: '未休年假折现', value: al.amount, color: '#d4a84b' });
       parts.push({
-        icon: '🌴', title: '未休年假折现（应休 ' + leaveDays + ' 天 × 未休 ' + al.unpaid + ' 天）', law: ['职工带薪年休假条例 第五条'],
+        title: '未休年假折现（应休 ' + leaveDays + ' 天 × 未休 ' + al.unpaid + ' 天）', law: ['职工带薪年休假条例 第五条'],
         body: '<ul class="clean">' + al.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>' +
         '<p style="margin:10px 0 0"><b>' + fmt(al.amount) + ' 元</b>　<span class="hint">' + esc(al.note) + '</span></p>'
       });
@@ -296,26 +294,26 @@ window.LJ = window.LJ || {};
     if (d.tYears || d.tMonths) {
       var pm = LJ.CALC.probationMax(d.tYears, d.tMonths);
       parts.push({
-        icon: '⏱', title: '拟签合同试用期上限校验', law: ['劳动合同法 第十九条'],
+        title: '拟签合同试用期上限校验', law: ['劳动合同法 第十九条'],
         body: '<p style="margin:0"><b>合同期限 ' + d.tYears + ' 年 ' + d.tMonths + ' 个月：</b>' + esc(pm.desc) + '</p>'
       });
     }
 
     var total = chartItems.reduce(function (s, i) { return s + i.value; }, 0);
-    var bar = chartItems.length ? '<div class="card"><h3 class="card-title"><span class="ico">📊</span>各项金额对比</h3>' + barChart(chartItems, null) + '</div>' : '';
+    var bar = chartItems.length ? '<div class="card"><h3 class="card-title">各项金额对比</h3>' + barChart(chartItems, null) + '</div>' : '';
 
     var summary = chartItems.map(function (i) {
-      return '<div class="metric" style="color:' + i.color + '"><span class="k">' + esc(i.label) + '</span><span class="v" style="color:' + i.color + '">' + fmt(i.value) + '<span class="u">元</span></span></div>';
+      return '<div class="metric"><span class="k">' + esc(i.label) + '</span><span class="v">' + fmt(i.value) + '<span class="u">元</span></span></div>';
     }).join('') +
       '<div class="metric alt2"><span class="k">预估合计</span><span class="v">' + fmt(total) + '<span class="u">元</span></span></div>';
 
     box.innerHTML =
-      '<div class="card"><h3 class="card-title mb0"><span class="ico">🧾</span>计算结果</h3>' +
+      '<div class="card"><h3 class="card-title mb0">计算结果</h3>' +
       '<p class="card-sub">按法定公式逐步计算，各分项可独立主张；合计仅为各分项加总，实际以证据与认定为准。</p>' +
       '<div class="grid grid-4">' + summary + '</div></div>' +
       bar +
       parts.map(function (p) {
-        return '<div class="card"><h3 class="card-title"><span class="ico">' + p.icon + '</span>' + esc(p.title) + '</h3>' +
+        return '<div class="card"><h3 class="card-title">' + esc(p.title) + '</h3>' +
           p.body + '<div class="divider"></div><div class="laws">' + lawChips(p.law) + '</div></div>';
       }).join('');
 
@@ -335,7 +333,7 @@ window.LJ = window.LJ || {};
   function renderRoadmapTypes() {
     $('roadmapTypes').innerHTML = LJ.ROADMAP.map(function (r) {
       return '<button class="btn" data-rid="' + r.id + '">' + esc(r.name) + '</button>';
-    }).join('') + '<button class="btn btn-ghost" data-rid="__all">📚 查看通用五步流程</button>';
+    }).join('') + '<button class="btn btn-ghost" data-rid="__all">查看通用五步流程</button>';
   }
 
   $('roadmapTypes').addEventListener('click', function (e) {
@@ -349,20 +347,24 @@ window.LJ = window.LJ || {};
   function renderRoadmap(id) {
     var type = id === '__all' ? null : LJ.ROADMAP.filter(function (r) { return r.id === id; })[0];
     var box = $('roadmapResult');
-    var steps = LJ.ROADMAP_COMMON.steps;
+    var isRoute = !!(type && type.route);
+    var steps = (type && type.route) || LJ.ROADMAP_COMMON.steps;
 
-    var stepsHtml = steps.map(function (s) {
-      return '<div class="tl-item"><h4>' + esc(s.title) + '</h4>' +
-        '<div class="tl-meta">⏱ ' + esc(s.meta) + '</div>' +
+    var stepsHtml = steps.map(function (s, i) {
+      return '<div class="tl-item">' +
+        '<div class="tl-head"><span class="tl-no">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<h4>' + esc(s.title) + '</h4>' +
+        (s.tag ? '<span class="tl-tag">' + esc(s.tag) + '</span>' : '') + '</div>' +
+        '<div class="tl-meta">' + esc(s.meta) + '</div>' +
         '<ul>' + s.points.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ul></div>';
     }).join('');
 
-    var extraHtml = type && type.extra ? '<div class="card"><h3 class="card-title"><span class="ico">⚠️</span>' +
+    var extraHtml = type && type.extra ? '<div class="card"><h3 class="card-title">' +
       esc(type.extra.title) + '</h3><ul class="clean">' +
       type.extra.points.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ul></div>' : '';
 
     var materialsHtml = (type ? type : LJ.ROADMAP[0]).materials.map(function (m) {
-      return '<span class="badge badge-info">📎 ' + esc(m) + '</span>';
+      return '<span class="badge badge-info">' + esc(m) + '</span>';
     }).join('&nbsp;');
 
     var burdenHtml = (type ? type.burden : ['发生劳动争议时，尽量留存劳动关系证明、工资支付与考勤记录等证据。']);
@@ -370,17 +372,17 @@ window.LJ = window.LJ || {};
     var tipsHtml = type ? type.tips : ['维权应当「先协商、留证据、守时效」；对结论有争议时优先咨询专业法律人士。'];
 
     box.innerHTML =
-      '<div class="card"><h3 class="card-title mb0"><span class="ico">🛡</span>' +
-      (type ? esc(type.name) + ' · 维权路线图' : '通用维权五步流程') + '</h3>' +
-      (type ? '<p class="card-sub">' + esc(type.desc) + '</p>' : '<p class="card-sub">无论何种劳动争议，法定救济框架均为以下五步；具体类型各有重点。</p>') +
+      '<div class="card"><h3 class="card-title mb0">' +
+      (type ? esc(type.name) + ' · ' + (isRoute ? '专属维权路线' : '通用维权路线') : '通用维权五步流程') + '</h3>' +
+      (type ? '<p class="card-sub">' + esc(type.desc) + '</p>' : '<p class="card-sub">无论何种劳动争议，法定救济框架均为五个阶段；具体类型各有专属路线。</p>') +
       '<div class="timeline">' + stepsHtml + '</div></div>' +
       extraHtml +
       '<div class="grid grid-2">' +
-      '<div class="card"><h3 class="card-title"><span class="ico">📎</span>建议准备的材料</h3>' + materialsHtml + '</div>' +
-      '<div class="card"><h3 class="card-title"><span class="ico">🧭</span>举证责任提示</h3><ul class="clean">' +
+      '<div class="card"><h3 class="card-title">建议准备的材料</h3>' + materialsHtml + '</div>' +
+      '<div class="card"><h3 class="card-title">举证责任提示</h3><ul class="clean">' +
       burdenHtml.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul></div>' +
       '</div>' +
-      '<div class="card"><h3 class="card-title"><span class="ico">💡</span>避坑提醒</h3><ul class="clean">' +
+      '<div class="card"><h3 class="card-title">避坑提醒</h3><ul class="clean">' +
       tipsHtml.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' +
       '<div class="divider"></div><div class="laws">' +
       lawChips(['劳动争议调解仲裁法 第五条', '劳动争议调解仲裁法 第二十七条', '劳动争议调解仲裁法 第四十三条']) + '</div></div>';
@@ -399,17 +401,16 @@ window.LJ = window.LJ || {};
     var prog = $('quizProgress').querySelector('i');
     if (quizState.done) {
       var total = LJ.QUIZ.length, pct = Math.round(quizState.score / total * 100);
-      var grade = pct === 100 ? '满分！劳动法小达人 🏆' : pct >= 80 ? '优秀，基本不会踩坑 👍' : pct >= 60 ? '良好，还有几个盲区要补' : pct >= 40 ? '及格线边缘，建议回看法条速查' : '需要恶补！建议先过一遍法条速查';
+      var grade = pct === 100 ? '满分：可直接出任公司劳动法顾问' : pct >= 80 ? '优秀，绝大多数坑都能避开' : pct >= 60 ? '良好，还有几个盲区要补' : pct >= 40 ? '及格线边缘，建议回看法条速查' : '建议先通读一遍法条速查再来挑战';
       prog.style.width = '100%';
       box.innerHTML =
-        '<div class="center" style="padding:18px 0">' +
-        '<div style="font-size:52px">' + (pct >= 80 ? '🎉' : pct >= 60 ? '😊' : '💪') + '</div>' +
-        '<h2 style="margin:8px 0 4px">' + quizState.score + ' / ' + total + '</h2>' +
+        '<div class="center" style="padding:22px 0">' +
+        '<h2 style="margin:0 0 6px;font-size:34px;letter-spacing:1px">' + quizState.score + ' / ' + total + '</h2>' +
         '<p class="hint">得分率 ' + pct + '% · ' + esc(grade) + '</p>' +
         '<p class="hint" id="quizBest"></p>' +
-        '<div class="row-inline center" style="justify-content:center">' +
-        '<button class="btn btn-primary" id="btnQuizAgain">🔄 再来一轮</button>' +
-        '<a class="btn" href="#law">📖 查法条补盲区</a></div></div>';
+        '<div class="row-inline center" style="justify-content:center;margin-top:10px">' +
+        '<button class="btn btn-primary" id="btnQuizAgain">再来一轮</button>' +
+        '<a class="btn" href="#law">查法条补盲区</a></div></div>';
       $('btnQuizAgain').addEventListener('click', resetQuiz);
 
       /* M8：已登录时提交本轮成绩并显示我的最佳 */
@@ -417,7 +418,7 @@ window.LJ = window.LJ || {};
         LJ.API.submitQuizScore(quizState.score, LJ.QUIZ.length).then(function (d) {
           var el = $('quizBest');
           if (el && d.best != null) {
-            el.textContent = '🏅 我的最佳 ' + d.best + ' / ' + LJ.QUIZ.length + ' · 累计完成 ' + d.games + ' 场（排行榜见「我的」页）';
+            el.textContent = '我的最佳 ' + d.best + ' / ' + LJ.QUIZ.length + ' · 累计完成 ' + d.games + ' 场（排行榜见「我的」页）';
           }
         }).catch(function () { /* 静默 */ });
       }
@@ -456,7 +457,7 @@ window.LJ = window.LJ || {};
       else if (i === choice) b.classList.add('wrong');
     });
     $('quizExplain').innerHTML =
-      '<div class="explain"><b>' + (correct ? '✅ 回答正确！' : '❌ 回答错误') + '</b>　' + esc(q.explain) +
+      '<div class="explain"><b>' + (correct ? '回答正确' : '回答错误') + '</b>　' + esc(q.explain) +
       '<div style="margin-top:8px">' + lawChips([q.law]) + '</div></div>';
     $('btnQuizNext').style.display = 'inline-flex';
   }
@@ -474,7 +475,7 @@ window.LJ = window.LJ || {};
       (groups[a.law] = groups[a.law] || []).push(a);
     });
     box.innerHTML = Object.keys(groups).map(function (law) {
-      return '<div class="card"><h3 class="card-title mb0"><span class="ico">📖</span>' + esc(law) +
+      return '<div class="card"><h3 class="card-title mb0">' + esc(law) +
         ' <span class="badge badge-info">' + groups[law].length + ' 条</span></h3>' +
         '<p class="card-sub">命中 ' + (list.length) + ' 条（当前显示）</p>' +
         groups[law].map(function (a) {
@@ -500,7 +501,7 @@ window.LJ = window.LJ || {};
   function renderQa() {
     var box = $('qaBox');
     if (!LJ.API.state.backend) {
-      box.innerHTML = '<div class="card"><h3 class="card-title"><span class="ico">💬</span>学习问答板</h3>' +
+      box.innerHTML = '<div class="card"><h3 class="card-title">学习问答板</h3>' +
         '<p class="card-sub">同学互答的劳动法学习问答板。需要后端在线：运行 <b>python -m server.server</b> 后访问 <b>http://127.0.0.1:5000</b> 刷新本页。</p></div>';
       return;
     }
@@ -518,7 +519,7 @@ window.LJ = window.LJ || {};
       ? '<form id="qaForm">' +
         '<label class="field"><span>标题（1-60 字）</span><input type="text" id="qaTitle" maxlength="60" required placeholder="一句话概括你的问题"></label>' +
         '<label class="field"><span>内容（1-2000 字）</span><textarea id="qaContent" maxlength="2000" required rows="3" placeholder="描述具体场景/法条疑问，尽量给出关键细节"></textarea></label>' +
-        '<div class="row-inline"><button class="btn btn-primary" type="submit">📮 发布提问</button> <span class="hint" id="qaMsg"></span></div></form>'
+        '<div class="row-inline"><button class="btn btn-primary" type="submit">发布提问</button> <span class="hint" id="qaMsg"></span></div></form>'
       : '<div class="notice">浏览问答无需登录；要<b>发帖/回复</b>请先<a href="#profile">登录学习账号</a>。</div>';
 
     var listHtml = posts.length
@@ -531,12 +532,12 @@ window.LJ = window.LJ || {};
         return '<div class="card qa-post">' +
           '<h3 class="card-title mb0">' + esc(po.title) + '</h3>' +
           '<div class="qa-meta"><b>' + esc(po.nickname || po.username) + '</b> · ' +
-          esc((po.created_at || '').replace('T', ' ').slice(0, 16)) + ' · 💬 ' + (po.reply_count || 0) + ' 回复</div>' +
+          esc((po.created_at || '').replace('T', ' ').slice(0, 16)) + ' · ' + (po.reply_count || 0) + ' 回复</div>' +
           '<p class="qa-body">' + esc(po.content) + '</p>' +
           '<div class="qa-replies">' + replies + '</div>' +
           '<div class="row-inline">' +
           (logged
-            ? '<button class="btn btn-ghost btn-sm" data-reply-toggle="' + po.id + '">↩ 回复</button>'
+            ? '<button class="btn btn-ghost btn-sm" data-reply-toggle="' + po.id + '">回复</button>'
             : '<span class="hint">登录后可回复</span>') +
           '</div>' +
           '<div class="qa-replybox" id="qaReplies' + po.id + '" style="display:none">' +
@@ -547,7 +548,7 @@ window.LJ = window.LJ || {};
       : '<p class="hint">还没有提问，来发第一个问题吧～</p>';
 
     box.innerHTML =
-      '<div class="card"><h3 class="card-title mb0"><span class="ico">💬</span>学习问答板</h3>' +
+      '<div class="card"><h3 class="card-title mb0">学习问答板</h3>' +
       '<p class="card-sub">学劳动法遇到疑问？发帖提问，同学互答；每帖最多展示最近 20 条回复。</p>' + formHtml + '</div>' +
       listHtml;
 
@@ -558,7 +559,7 @@ window.LJ = window.LJ || {};
       var msg = $('qaMsg');
       if (!title || !content) return;
       LJ.API.postQa(title, content).then(function () {
-        if (msg) { msg.textContent = '✅ 已发布，刷新中…'; }
+        if (msg) { msg.textContent = '已发布，刷新中…'; }
         renderQa();
       }).catch(function (err) {
         if (msg) msg.textContent = '发布失败：' + ((err && err.message) || '未知错误');
@@ -594,7 +595,7 @@ window.LJ = window.LJ || {};
   function authFormHtml(mode) {
     var isLogin = mode === 'login';
     return '<div class="card" style="max-width:520px;margin:0 auto">' +
-      '<h3 class="card-title"><span class="ico">🔐</span>' + (isLogin ? '登录' : '注册') + '学习账号</h3>' +
+      '<h3 class="card-title">' + (isLogin ? '登录' : '注册') + '学习账号</h3>' +
       '<p class="card-sub">登录后解锁：体检/计算历史、闯关排行榜、每日打卡、问答板、学习统计。</p>' +
       '<div class="row-inline" style="margin-bottom:14px">' +
       '<button class="btn ' + (isLogin ? 'btn-primary' : 'btn-ghost') + '" data-auth-tab="login">登录</button>' +
@@ -684,12 +685,12 @@ window.LJ = window.LJ || {};
       var doneToday = checkins.days.indexOf(todayIso) >= 0;
 
       var statsHtml =
-        '<div class="metric"><span class="k">📅 连续打卡</span><span class="v">' + checkins.streak + ' 天</span></div>' +
+        '<div class="metric"><span class="k">连续打卡</span><span class="v">' + checkins.streak + ' 天</span></div>' +
         '<div class="metric"><span class="k">累计打卡</span><span class="v">' + checkins.total + ' 次</span></div>' +
-        '<div class="metric"><span class="k">🏅 闯关最佳</span><span class="v">' + (mine.best == null ? '-' : mine.best + ' / 12') + '</span></div>' +
+        '<div class="metric"><span class="k">闯关最佳</span><span class="v">' + (mine.best == null ? '-' : mine.best + ' / 12') + '</span></div>' +
         '<div class="metric"><span class="k">累计场次</span><span class="v">' + mine.games + ' 场</span></div>' +
-        '<div class="metric"><span class="k">📄 体检记录</span><span class="v">' + checks.length + ' 条</span></div>' +
-        '<div class="metric"><span class="k">🧮 计算记录</span><span class="v">' + calcs.length + ' 条</span></div>';
+        '<div class="metric"><span class="k">体检记录</span><span class="v">' + checks.length + ' 条</span></div>' +
+        '<div class="metric"><span class="k">计算记录</span><span class="v">' + calcs.length + ' 条</span></div>';
 
       var checkList = checks.length
         ? checks.map(function (c) {
@@ -697,8 +698,8 @@ window.LJ = window.LJ || {};
           return '<div class="hist-row"><div><b>' + esc(c.title) + '</b>' +
             '<div class="hint">' + esc((c.created_at || '').replace('T', ' ').slice(0, 16)) + ' · ' + c.hit_count + ' 类 · <b>' + c.score + '</b> 分 ' +
             '<span class="badge ' + (c.level === 'high' ? 'badge-danger' : c.level === 'medium' ? 'badge-warn' : 'badge-info') + '">' + lv + '</span></div></div>' +
-            '<div class="row-inline"><button class="btn btn-ghost btn-sm" data-replay-check="' + c.id + '">↩ 重放</button>' +
-            '<button class="btn btn-ghost btn-sm" data-del-check="' + c.id + '">🗑</button></div></div>';
+            '<div class="row-inline"><button class="btn btn-ghost btn-sm" data-replay-check="' + c.id + '">重放</button>' +
+            '<button class="btn btn-ghost btn-sm" data-del-check="' + c.id + '">删除</button></div></div>';
         }).join('')
         : '<p class="hint">还没有体检记录：去「合同体检」载入示例合同跑一次，结果会自动保存到这里。</p>';
 
@@ -706,8 +707,8 @@ window.LJ = window.LJ || {};
         ? calcs.map(function (c) {
           return '<div class="hist-row"><div><b>' + esc(c.title) + '</b>' +
             '<div class="hint">' + esc((c.created_at || '').replace('T', ' ').slice(0, 16)) + '</div></div>' +
-            '<div class="row-inline"><button class="btn btn-ghost btn-sm" data-replay-calc="' + c.id + '">↩ 重放</button>' +
-            '<button class="btn btn-ghost btn-sm" data-del-calc="' + c.id + '">🗑</button></div></div>';
+            '<div class="row-inline"><button class="btn btn-ghost btn-sm" data-replay-calc="' + c.id + '">重放</button>' +
+            '<button class="btn btn-ghost btn-sm" data-del-calc="' + c.id + '">删除</button></div></div>';
         }).join('')
         : '<p class="hint">还没有计算记录：去「权益计算」填月薪等数据算一次，结果会自动保存到这里。</p>';
 
@@ -716,7 +717,7 @@ window.LJ = window.LJ || {};
         ? '<table class="data"><tr><th>名次</th><th>用户</th><th>最佳</th><th>场次</th><th>最近</th></tr>' +
           board.map(function (b, i) {
             var me = u && (b.username === u.username);
-            return '<tr' + (me ? ' style="background:rgba(69,183,245,.12)"' : '') + '><td>' + (i + 1) + '</td>' +
+            return '<tr' + (me ? ' class="me-row"' : '') + '><td>' + (i + 1) + '</td>' +
               '<td>' + esc((b.nickname || '') + (me ? '（我）' : '')) + '</td>' +
               '<td><b>' + b.best + '</b> / 12</td><td>' + b.games + '</td>' +
               '<td class="hint">' + esc((b.last_at || '').replace('T', ' ').slice(0, 10)) + '</td></tr>';
@@ -725,21 +726,21 @@ window.LJ = window.LJ || {};
 
       box.innerHTML =
         '<div class="card">' +
-        '<h3 class="card-title mb0"><span class="ico">👤</span>' + esc(u.nickname || u.username) + '</h3>' +
+        '<h3 class="card-title mb0">' + esc(u.nickname || u.username) + '</h3>' +
         '<p class="card-sub">@' + esc(u.username) + ' · 注册于 ' + esc((u.created_at || '').slice(0, 10)) + '</p>' +
         '<div class="row-inline">' +
         '<button class="btn btn-ghost btn-sm" id="btnLogout">退出登录</button>' +
         '<button class="btn btn-sm ' + (doneToday ? 'btn-ghost' : 'btn-primary') + '" id="btnCheckin">' +
-        (doneToday ? '✅ 今日已打卡' : '📅 今日学法打卡') + '</button>' +
+        (doneToday ? '今日已打卡' : '今日学法打卡') + '</button>' +
         ' <span class="hint" id="checkinMsg"></span>' +
         '</div></div>' +
 
-        '<div class="card"><h3 class="card-title"><span class="ico">📊</span>学习统计</h3>' +
+        '<div class="card"><h3 class="card-title">学习统计</h3>' +
         '<div class="grid grid-3">' + statsHtml + '</div></div>' +
 
-        '<div class="card"><h3 class="card-title"><span class="ico">📄</span>体检历史</h3>' + checkList + '</div>' +
-        '<div class="card"><h3 class="card-title"><span class="ico">🧮</span>计算历史</h3>' + calcList + '</div>' +
-        '<div class="card"><h3 class="card-title"><span class="ico">🏆</span>闯关排行榜（TOP 10）</h3>' + boardRows + '</div>';
+        '<div class="card"><h3 class="card-title">体检历史</h3>' + checkList + '</div>' +
+        '<div class="card"><h3 class="card-title">计算历史</h3>' + calcList + '</div>' +
+        '<div class="card"><h3 class="card-title">闯关排行榜（TOP 10）</h3>' + boardRows + '</div>';
 
       /* 事件绑定 */
       $('btnLogout').addEventListener('click', function () {
@@ -750,7 +751,7 @@ window.LJ = window.LJ || {};
         ciBtn.addEventListener('click', function () {
           LJ.API.checkin().then(function (d) {
             var m = $('checkinMsg');
-            if (m) m.textContent = '✅ 打卡成功，连续 ' + d.streak + ' 天！';
+            if (m) m.textContent = '打卡成功，连续 ' + d.streak + ' 天！';
             loadProfileData();
           }).catch(function (err) {
             var m = $('checkinMsg');
@@ -822,7 +823,7 @@ window.LJ = window.LJ || {};
     if (!s.ready) { box.innerHTML = '<div class="card center"><p class="hint">正在连接后端服务…</p></div>'; return; }
     if (!s.backend) {
       box.innerHTML =
-        '<div class="card"><h3 class="card-title"><span class="ico">🔌</span>未连接后端服务</h3>' +
+        '<div class="card"><h3 class="card-title">未连接后端服务</h3>' +
         '<p class="card-sub">当前为纯前端「本地引擎模式」，五大模块均可正常演示。要解锁账号/历史/打卡/问答等在线功能：</p>' +
         '<div class="notice">在项目根目录运行：<b>python -m server.server</b>，然后访问 <b>http://127.0.0.1:5000</b> 并刷新本页。</div>' +
         '<p class="kv" style="margin-top:12px">在线功能一览：注册登录 / 体检与计算历史 / 闯关成绩与排行榜 / 每日学法打卡（连续天数）/ 学习问答板。</p>' +
